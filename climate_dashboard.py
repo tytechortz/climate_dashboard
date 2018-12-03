@@ -29,15 +29,27 @@ app.layout = html.Div([
         [Input('month-picker', 'value')])
 def update_figure(selected_month):
     filtered_df = df[df['month'] == selected_month]
-        traces = []
-        for station_name in filtered_df['station'] == station_name]
+    traces = []
+    for station_name in filtered_df['station'].unique():
+        df_by_station = filtered_df[filtered_df['station'] == station_name]
         traces.append(go.Scatter(
-            x=df_by_continent[''],
-            y=df_by_continent[''],
-            text=df_by_continent[''],
+            x=df_by_station['month'],
+            y=df_by_station['T_MAX'],
+            text=df_by_station['station'],
             mode='markers',
             opacity=0.7,
+            marker={'size': 5},
+            name=station_name
         ))
+
+    return {
+        'data': traces,
+        'layout': go.Layout(
+            xaxis={'type': 'log', 'title': 'Year'},
+            yaxis={'title': 'Temp'},
+            hovermode='closest'
+        )
+    }
 
 
 if __name__ == '__main__':

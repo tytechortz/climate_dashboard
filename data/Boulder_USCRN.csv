@@ -1,4 +1,4 @@
-Station,year,month,RUN_MON,LON,LAT,T_MAX,T_MIN,T_MEAN,T_AVG
+station,year,month,RUN_MON,LON,LAT,T_MAX,T_MIN,T_MEAN,T_AVG
 Boulder,2004,1,4,-105.5409,40.0354,-2.2,-10.8,-6.5,-6.2
 Boulder,2004,2,5,-105.5409,40.0354,-3.3,-14.2,-8.7,-8
 Boulder,2004,3,6,-105.5409,40.0354,5.2,-6.7,-0.7,-0.4

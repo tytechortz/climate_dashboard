@@ -5,29 +5,21 @@ from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import pandas as pd
 
-df = pd.read_csv('./data/Stapleton.csv')
+df = pd.read_csv('./data/Boulder_USCRN.csv')
 
 
 app = dash.Dash()
 
-year_options = []
-for year in df['YEAR'].unique():
-    year_options.append({'lable':str(year),'value':year})
+month_options = []
+for month in df['month'].unique():
+    month_options.append({'label':str(month), 'value':month})
 
 app.layout = html.Div([
     dcc.Graph(id='graph'),
-    dcc.Dropdown(id='year-picker', options=year_options)
-                value=df['YEAR'].min())
+    dcc.Dropdown(id='month-picker',options=month_options,value=df['month'].min())
 ])
 
-@app.callback(Output('graph', 'figure'),
-            [Input('year-picker', 'value')])
-def update_figure(selected_year):
-    return #something
 
-    filtered_df = df[df['YEAR']== selected_year]
-
-    traces 
 
 if __name__ == '__main__':
-    ap.run.server()
+    app.run_server()

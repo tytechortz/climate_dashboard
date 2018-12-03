@@ -15,25 +15,24 @@ for station in df['station'].unique():
     station_options.append({'label':str(station), 'value':station})
 
 
-month_options = []
-for month in df['month'].unique():
-    month_options.append({'label':str(month), 'value':month})
 
 app.layout = html.Div([
-    dcc.Dropdown(id='station-picker',options=station_options,value=df['station']),
     dcc.Graph(id='graph'),
-    dcc.Dropdown(id='month-picker',options=month_options,value=df['month'].min())
+    dcc.Dropdown(id='station-picker',options=station_options,value=df['station']),
 ])
 
+
+
+
 @app.callback(Output('graph', 'figure'),
-        [Input('month-picker', 'value')])
-def update_figure(selected_month):
-    filtered_df = df[df['month'] == selected_month]
+        [Input('station-picker', 'value')])
+def update_figure(selected_station):
+    filtered_df = df[df['station'] == selected_station]
     traces = []
     for station_name in filtered_df['station'].unique():
         df_by_station = filtered_df[filtered_df['station'] == station_name]
         traces.append(go.Scatter(
-            x=df_by_station['month'],
+            x=df_by_station['RUN_MON'],
             y=df_by_station['T_MAX'],
             text=df_by_station['station'],
             mode='markers',

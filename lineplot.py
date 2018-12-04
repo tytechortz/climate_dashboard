@@ -5,7 +5,7 @@ from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import pandas as pd
 
-df = pd.read_csv('./data/Boulder_USCRN.csv')
+df = pd.read_csv('./data/USCRN_data.csv')
 
 
 app = dash.Dash()
@@ -35,7 +35,7 @@ def update_figure(selected_station):
             x=df_by_station['RUN_MON'],
             y=df_by_station['T_MAX'],
             text=df_by_station['station'],
-            mode='markers',
+            mode='markers+lines',
             opacity=0.7,
             marker={'size': 5},
             name=station_name

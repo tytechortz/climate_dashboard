@@ -17,7 +17,7 @@ for station in df['station'].unique():
 
 year_options = []
 for YEAR in df1['YEAR'].unique():
-    year_options.append({'label':str(YEAR), 'value':YEAR})
+    year_options.append({'label':(YEAR), 'value':YEAR})
 
 
 app.layout = html.Div([
@@ -109,26 +109,26 @@ def update_figure(selected_station):
 
 @app.callback(Output('stapleton', 'figure'),
         [Input('denver-year-picker', 'value')])
-def update_figure(selected_station):
-    filtered_df1 = df1[df1['YEAR'] == selected_station]
+def update_figure(selected_year):
+    filtered_df1 = df1[df1['YEAR'] == selected_year]
     traces = []
-    for station_name in filtered_df1['YEAR'].unique():
-        df1_by_station = filtered_df1[filtered_df1['YEAR'] == station_name]
+    for year in filtered_df1['YEAR'].unique():
+        df1_by_year = filtered_df1[filtered_df1['YEAR'] == year]
         traces.append(go.Scatter(
-            x=df_by_year['YEAR'],
-            y=df_by_year['TMAX'],
-            text=df_by_year['YEAR'],
+            x=df1_by_year['MONTH'],
+            y=df1_by_year['TMAX'],
+            text=df1_by_year['YEAR'],
             mode='markers+lines',
             opacity=0.7,
             marker={'size': 5},
-            name=station_name
+            name=year
         ))
 
     return {
         'data': traces,
         'layout': go.Layout(
             xaxis={'title': 'Running Total Months'},
-            yaxis={'title': 'Temp in Deg C'},
+            yaxis={'title': 'Temp in Deg F'},
             hovermode='closest'
         )
     }

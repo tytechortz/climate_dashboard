@@ -19,8 +19,18 @@ year_options = []
 for YEAR in df1['YEAR'].unique():
     year_options.append({'label':(YEAR), 'value':YEAR})
 
+year_options = []
+for year in df1['YEAR'].unique():
+    year_options.append({'label':str(year),'value':year})
 
 app.layout = html.Div([
+
+    html.Div([
+        html.H3('Denver Max Daily Temp'),
+        dcc.Graph(id='graph'),
+        dcc.Dropdown(id='year-picker',options=year_options,value=df1['YEAR'].min())
+    ]),
+
 
     html.Div([
         dcc.Graph(id='max_graph'),
@@ -53,6 +63,31 @@ app.layout = html.Div([
 
 ])
 
+@app.callback(Output('graph', 'figure'),
+              [Input('year-picker', 'value')])
+def update_figure(selected_year):
+    filtered_df = df1[df1['YEAR'] == selected_year]
+    traces = []
+    for month_num in filtered_df['MONTH'].unique():
+        df_by_month = filtered_df[filtered_df['MONTH'] == month_num]
+        traces.append(go.Scatter(
+            x=df_by_month['DAY'],
+            y=df_by_month['TMAX'],
+            text=df_by_month['NAME'],
+            mode='markers + lines',
+            opacity=0.7,
+            marker={'size': 5},
+            name=month_num
+        ))
+
+    return {
+        'data': traces,
+        'layout': go.Layout(
+            xaxis={'title': 'TIME'},
+            yaxis={'title': 'TMAX'},
+            hovermode='closest'
+        )
+    }
 
 @app.callback(Output('max_graph', 'figure'),
         [Input('station-picker-max', 'value')])

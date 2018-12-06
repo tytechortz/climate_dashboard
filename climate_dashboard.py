@@ -87,7 +87,7 @@ def update_figure(selected_year1, selected_year2):
             mode='markers + lines',
             opacity=0.7,
             marker={'size': 5},
-            name=month_num
+            name=selected_year1
         ))
     for month_num in filtered_df2['MONTH'].unique():
         df_by_month = filtered_df2[filtered_df2['MONTH'] == month_num]
@@ -98,7 +98,7 @@ def update_figure(selected_year1, selected_year2):
             mode='markers + lines',
             opacity=0.7,
             marker={'size': 5},
-            name=month_num
+            name=selected_year2
         ))
 
     return {

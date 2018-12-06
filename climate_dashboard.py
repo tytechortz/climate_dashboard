@@ -4,6 +4,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import pandas as pd
+import dash_table
 
 df = pd.read_csv('./data/USCRN_data.csv')
 df1 = pd.read_csv('./data/Stapleton.csv')
@@ -33,21 +34,35 @@ app.layout = html.Div([
         html.H3('Denver Max Daily Temp', style={'align': 'center', 'color': 'blue'}),
         dcc.Graph(id='graph'),
             html.Div([
-                dcc.Dropdown(id='year-picker1',options=year_options,value=df1['YEAR'].min())
+                dcc.Dropdown(id='year-picker1',options=year_options,value=df1['YEAR'].min()),
             ],
             style={'width': '48%', 'display': 'inline-block'}), 
             html.Div([
-                dcc.Dropdown(id='year-picker2',options=year_options,value=df1['YEAR'].min())
+                dcc.Dropdown(id='year-picker2',options=year_options,value=df1['YEAR'].min()),
             ],
             style={'width': '48%', 'float': 'right', 'display': 'inline-block'}),
             html.Div([
-                dcc.RadioItems(id='month-picker1',options=month_options,value=df1['MONTH'])
+                dcc.RadioItems(id='month-picker1',options=month_options,value=df1['MONTH']),
             ],
             style={'width': '48%', 'display': 'inline-block'}),
             html.Div([
-                dcc.RadioItems(id='month-picker2',options=month_options,value=df1['MONTH'])
+                dcc.RadioItems(id='month-picker2',options=month_options,value=df1['MONTH']),
             ],
-            style={'width': '48%', 'float': 'right', 'display': 'inline-block'}), 
+            style={'width': '48%', 'float': 'right', 'display': 'inline-block'}),
+
+            html.H4('Datatable'),
+            html.Div([
+                dash_table.DataTable(
+                        id='table',
+                        data=df1.to_dict("rows"),
+                        columns=[{"name": i, "id": i} for i in df1.columns],
+                        n_fixed_rows=1,
+                        style_table={
+                            'maxHeight': '300',
+                            'overflowY': 'scroll'
+                        },
+                ),
+            ])
     ]),
 
     html.Div([
@@ -85,13 +100,15 @@ app.layout = html.Div([
 
 @app.callback(Output('graph', 'figure'),
               [Input('year-picker1', 'value'),
-               Input('year-picker2', 'value')])
-def update_figure(selected_year1, selected_year2):
+               Input('year-picker2', 'value'),
+               Input('month-picker1', 'value'),
+               Input('month-picker2', 'value')])
+def update_figure(selected_year1, selected_year2, selected_month1, selected_month2):
     filtered_df1 = df1[df1['YEAR'] == selected_year1]
     filtered_df2 = df1[df1['YEAR'] == selected_year2]
     traces = []
-    for month_num in filtered_df1['MONTH'].unique():
-        df_by_month = filtered_df1[filtered_df1['MONTH'] == month_num]
+    for selected_month1 in filtered_df1['MONTH'].unique():
+        df_by_month = filtered_df1[filtered_df1['MONTH'] == selected_month1]
         traces.append(go.Scatter(
             x=df_by_month['DAY'],
             y=df_by_month['TMAX'],
@@ -101,8 +118,8 @@ def update_figure(selected_year1, selected_year2):
             marker={'size': 5},
             name=selected_year1
         ))
-    for month_num in filtered_df2['MONTH'].unique():
-        df_by_month = filtered_df2[filtered_df2['MONTH'] == month_num]
+    for selected_month2 in filtered_df2['MONTH'].unique():
+        df_by_month = filtered_df2[filtered_df2['MONTH'] == selected_month2]
         traces.append(go.Scatter(
             x=df_by_month['DAY'],
             y=df_by_month['TMAX'],
@@ -189,7 +206,6 @@ def update_figure(selected_year):
             mode='markers+lines',
             opacity=0.7,
             marker={'size': 5},
-            name=year
         ))
 
     return {

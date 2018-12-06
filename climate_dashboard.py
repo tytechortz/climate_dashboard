@@ -9,6 +9,8 @@ import dash_table
 df = pd.read_csv('./data/USCRN_data.csv')
 df1 = pd.read_csv('./data/Stapleton.csv')
 
+PAGE_SIZE = 10
+
 
 app = dash.Dash()
 
@@ -53,15 +55,20 @@ app.layout = html.Div([
             html.H4('Datatable'),
             html.Div([
                 dash_table.DataTable(
-                        id='table',
-                        data=df1.to_dict("rows"),
-                        columns=[{"name": i, "id": i} for i in df1.columns],
-                        n_fixed_rows=1,
-                        style_table={
-                            'maxHeight': '300',
-                            'overflowY': 'scroll'
+                        id='table-multicol-sorting',
+                        columns=[
+                            {"name": i, "id": i} for i in sorted(df1.columns)
+                        ],
+                        pagination_settings={
+                            'current_page': 0,
+                            'page_size': PAGE_SIZE
                         },
-                ),
+                        pagination_mode='be',
+
+                        sorting='be',
+                        sorting_type='multi',
+                        sorting_settings=[]
+                    )
             ])
     ]),
 
@@ -138,6 +145,30 @@ def update_figure(selected_year1, selected_year2, selected_month1, selected_mont
             hovermode='closest'
         )
     }
+
+@app.callback(
+    Output('table-multicol-sorting', "data"),
+    [Input('table-multicol-sorting', "pagination_settings"),
+     Input('table-multicol-sorting', "sorting_settings")])
+def update_graph(pagination_settings, sorting_settings):
+    print(sorting_settings)
+    if len(sorting_settings):
+        dff = df1.sort_values(
+            [col['column_id'] for col in sorting_settings],
+            ascending=[
+                col['direction'] == 'asc'
+                for col in sorting_settings
+            ],
+            inplace=False
+        )
+    else:
+        # No sort is applied
+        dff = df1
+
+    return dff.iloc[
+        pagination_settings['current_page']*pagination_settings['page_size']:
+        (pagination_settings['current_page'] + 1)*pagination_settings['page_size']
+    ].to_dict('rows')
 
 @app.callback(Output('max_graph', 'figure'),
         [Input('station-picker-max', 'value')])

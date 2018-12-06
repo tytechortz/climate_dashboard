@@ -19,23 +19,35 @@ year_options = []
 for YEAR in df1['YEAR'].unique():
     year_options.append({'label':(YEAR), 'value':YEAR})
 
-year_options = []
-for year in df1['YEAR'].unique():
-    year_options.append({'label':str(year),'value':year})
+# year_options = []
+# for year in df1['YEAR'].unique():
+#     year_options.append({'label':str(year),'value':year})
+
+month_options = []
+for month in df1['MONTH'].unique():
+    month_options.append({'label':(month), 'value':month})
 
 app.layout = html.Div([
 
     html.Div([
-        html.H3('Denver Max Daily Temp'),
+        html.H3('Denver Max Daily Temp', style={'align': 'center', 'color': 'blue'}),
         dcc.Graph(id='graph'),
             html.Div([
                 dcc.Dropdown(id='year-picker1',options=year_options,value=df1['YEAR'].min())
             ],
-            style={'width': '48%', 'display': 'inline-block'}),
+            style={'width': '48%', 'display': 'inline-block'}), 
             html.Div([
                 dcc.Dropdown(id='year-picker2',options=year_options,value=df1['YEAR'].min())
             ],
-            style={'width': '48%', 'float': 'right', 'display': 'inline-block'})
+            style={'width': '48%', 'float': 'right', 'display': 'inline-block'}),
+            html.Div([
+                dcc.RadioItems(id='month-picker1',options=month_options,value=df1['MONTH'])
+            ],
+            style={'width': '48%', 'display': 'inline-block'}),
+            html.Div([
+                dcc.RadioItems(id='month-picker2',options=month_options,value=df1['MONTH'])
+            ],
+            style={'width': '48%', 'float': 'right', 'display': 'inline-block'}), 
     ]),
 
     html.Div([
